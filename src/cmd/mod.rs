@@ -18,7 +18,9 @@ use crate::errors::{self, Result};
 use crate::http::Http;
 use crate::pipeline::run::{run_fetch, FetchOpts};
 use crate::pipeline::sink::{MakeWriter, WriterOpts};
+use crate::pipeline::Config;
 use crate::pipeline::SinkConn;
+use crate::pipeline::Source;
 use crate::writer::WriteMode;
 
 /// Default number of concurrent requests for fetching data.
@@ -117,15 +119,7 @@ pub async fn run_pipeline(root: &str, cfg_path: &str) -> Result<()> {
 
     // Process each template
     for (index, name) in template_names.into_iter().enumerate() {
-        process_template(
-            index + 1,
-            name,
-            &env,
-            &capture,
-            &config,
-            &fetch_opts,
-        )
-        .await?;
+        process_template(index + 1, name, &env, &capture, &config, &fetch_opts).await?;
     }
 
     log_pipeline_complete(start_time.elapsed().as_millis());
@@ -148,7 +142,7 @@ async fn process_template(
     name: String,
     env: &minijinja::Environment<'_>,
     capture: &Arc<Mutex<RenderCapture>>,
-    config: &crate::config::Config,
+    config: &Config,
     fetch_opts: &FetchOpts,
 ) -> Result<()> {
     let span = tracing::info_span!("module", idx = index, name = %name);
@@ -212,7 +206,7 @@ async fn process_template(
 }
 
 /// Builds an HTTP client with configured headers from the source.
-fn build_http_client(source: &crate::config::Source) -> Result<reqwest::Client> {
+fn build_http_client(source: &Source) -> Result<reqwest::Client> {
     let mut http = Http::new(source.url.clone());
 
     if let Some(headers) = &source.headers {
@@ -225,10 +219,7 @@ fn build_http_client(source: &crate::config::Source) -> Result<reqwest::Client> 
 }
 
 /// Extracts the destination table name from the source configuration.
-fn extract_destination_table<'a>(
-    source: &'a crate::config::Source,
-    source_name: &str,
-) -> Result<&'a str> {
+fn extract_destination_table<'a>(source: &'a Source, source_name: &str) -> Result<&'a str> {
     source.table_destination_name.as_deref().ok_or_else(|| {
         warn!(%source_name, "Missing table_destination_name");
         errors::ApitapError::PipelineError(format!(
@@ -238,10 +229,7 @@ fn extract_destination_table<'a>(
 }
 
 /// Creates writer options with sensible defaults.
-fn create_writer_options<'a>(
-    dest_table: &'a str,
-    source: &crate::config::Source,
-) -> WriterOpts<'a> {
+fn create_writer_options<'a>(dest_table: &'a str, source: &Source) -> WriterOpts<'a> {
     WriterOpts {
         dest_table,
         primary_key: source.primary_key_in_dest.clone(),
@@ -256,9 +244,7 @@ fn create_writer_options<'a>(
 
 /// Creates a configuration error for missing source or target.
 fn create_config_error(config_type: &str, name: &str) -> errors::ApitapError {
-    errors::ApitapError::PipelineError(format!(
-        "{config_type} not found in config: {name}"
-    ))
+    errors::ApitapError::PipelineError(format!("{config_type} not found in config: {name}"))
 }
 
 // Logging helper functions
