@@ -104,11 +104,9 @@ pub fn build_client_with_retry(
         )
         .build_with_max_retries(config_retray.max_attempts);
 
-    let client = ClientBuilder::new(reqwest_client)
+    ClientBuilder::new(reqwest_client)
         .with(AttemptLogger)
         .with(RetryTransientMiddleware::new_with_policy(policy))
         .with(SummaryLogger)
-        .build();
-
-    client
+        .build()
 }

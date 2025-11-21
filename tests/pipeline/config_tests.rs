@@ -1,10 +1,9 @@
 use apitap::http::fetcher::Pagination;
-use apitap::pipeline::{Config, PostgresAuth, Retry, Source, Target};
+use apitap::pipeline::{Config, PostgresAuth, Retry, Target};
 
 #[test]
 fn test_config_source_indexing() {
-    let config_yaml = format!(
-        r#"
+    let config_yaml = r#"
 sources:
   - name: api1
     url: https://api.example.com/users
@@ -29,10 +28,9 @@ targets:
     auth:
       username: testuser
       password: testpass
-"#
-    );
+"#;
 
-    let config: Config = serde_yaml::from_str(&config_yaml).unwrap();
+    let config: Config = serde_yaml::from_str(config_yaml).unwrap();
 
     // Test source retrieval by name
     assert!(config.source("api1").is_some());

@@ -35,7 +35,7 @@ fn test_pgtype_from_json_integer() {
 
 #[test]
 fn test_pgtype_from_json_float() {
-    assert_eq!(PgType::from_json_value(&json!(3.14)), PgType::Double);
+    assert_eq!(PgType::from_json_value(&json!(3.5)), PgType::Double);
     assert_eq!(PgType::from_json_value(&json!(-2.5)), PgType::Double);
     assert_eq!(PgType::from_json_value(&json!(0.0)), PgType::Double);
 }
@@ -160,7 +160,7 @@ fn test_analyze_schema_basic_types() {
 #[test]
 fn test_analyze_schema_type_coercion() {
     // Mix integer and float - should coerce to Double
-    let rows = vec![json!({"value": 100}), json!({"value": 3.14})];
+    let rows = vec![json!({"value": 100}), json!({"value": 45.67})];
 
     let schema = apitap::writer::postgres::PostgresWriter::analyze_schema(&rows, 10).unwrap();
 

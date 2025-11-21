@@ -64,7 +64,7 @@ fn test_write_mode_match_patterns() {
 
 #[test]
 fn test_write_mode_in_vec() {
-    let modes = vec![WriteMode::Merge, WriteMode::Append, WriteMode::Merge];
+    let modes = [WriteMode::Merge, WriteMode::Append, WriteMode::Merge];
 
     assert_eq!(modes.len(), 3);
     assert_eq!(modes[0], WriteMode::Merge);
@@ -82,7 +82,7 @@ fn test_write_mode_clone_independence() {
 
     // Verify they're logically the same
     match (original, cloned) {
-        (WriteMode::Merge, WriteMode::Merge) => assert!(true),
+        (WriteMode::Merge, WriteMode::Merge) => {}
         _ => panic!("Clone should preserve variant"),
     }
 }
@@ -121,5 +121,9 @@ fn test_write_mode_in_result() {
     assert!(ok_mode.is_ok());
     assert!(err_mode.is_err());
 
-    assert_eq!(ok_mode.unwrap(), WriteMode::Append);
+    if let Ok(mode) = ok_mode {
+        assert_eq!(mode, WriteMode::Append);
+    } else {
+        panic!("Expected Ok value");
+    }
 }

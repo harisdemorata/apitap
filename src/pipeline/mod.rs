@@ -92,8 +92,7 @@ impl SinkConn for Target {
                         return Err(crate::errors::ApitapError::ConfigError(format!(
                             "environment variable '{}' for postgres username is empty",
                             env_name
-                        ))
-                        .into());
+                        )));
                     }
                     val
                 } else if let Some(u) = &pg.auth.username {
@@ -101,8 +100,7 @@ impl SinkConn for Target {
                 } else {
                     return Err(crate::errors::ApitapError::ConfigError(
                         "postgres username not provided".into(),
-                    )
-                    .into());
+                    ));
                 };
 
                 let password = if let Some(env_name) = &pg.auth.password_env {
@@ -116,8 +114,7 @@ impl SinkConn for Target {
                         return Err(crate::errors::ApitapError::ConfigError(format!(
                             "environment variable '{}' for postgres password is empty",
                             env_name
-                        ))
-                        .into());
+                        )));
                     }
                     val
                 } else if let Some(p) = &pg.auth.password {
@@ -125,8 +122,7 @@ impl SinkConn for Target {
                 } else {
                     return Err(crate::errors::ApitapError::ConfigError(
                         "postgres password not provided".into(),
-                    )
-                    .into());
+                    ));
                 };
 
                 let url = format!(

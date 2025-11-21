@@ -67,7 +67,11 @@ fn test_serde_json_error_from_conversion() {
 fn test_result_type_ok() {
     let result: Result<i32> = Ok(42);
     assert!(result.is_ok());
-    assert_eq!(result.unwrap(), 42);
+    if let Ok(val) = result {
+        assert_eq!(val, 42);
+    } else {
+        panic!("Expected Ok value");
+    }
 }
 
 #[test]

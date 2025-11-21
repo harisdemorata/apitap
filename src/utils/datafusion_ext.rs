@@ -173,7 +173,7 @@ impl DataFrameExt for DataFrame {
 
         let mut out = Vec::<T>::new();
         while let Some(item) = rb_stream.next().await {
-            let batch = item.map_err(|e| ApitapError::Datafusion(e))?;
+            let batch = item.map_err(ApitapError::Datafusion)?;
             let vals: Vec<serde_json::Value> = serde_arrow::from_record_batch(&batch)?;
             let chunk: Vec<T> = serde_json::from_value(serde_json::Value::Array(vals))?;
             out.extend(chunk);

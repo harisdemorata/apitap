@@ -40,7 +40,6 @@ impl TrueStreamingProcessor {
                     let batch = direct_json_to_batch(&buffer, &schema)?;
                     buffer.clear();
                     yield batch;
-                } else {
                 }
             }
 

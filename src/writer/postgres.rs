@@ -222,10 +222,7 @@ impl PostgresWriter {
 
             for (key, value) in obj {
                 let pg_type = PgType::from_json_value(value);
-                column_types
-                    .entry(key.clone())
-                    .or_insert_with(Vec::new)
-                    .push(pg_type);
+                column_types.entry(key.clone()).or_default().push(pg_type);
             }
         }
 
@@ -373,11 +370,12 @@ impl PostgresWriter {
         tracing::info!(table = %self.table_name, "truncating table");
         tracing::debug!(sql = %sql, "truncate sql");
 
-        match {
+        let res = {
             let span = debug_span!("sql.execute", statement = "truncate", table = %self.table_name);
             let _g = span.enter();
             sqlx::query(&sql).execute(&self.pool).await
-        } {
+        };
+        match res {
             Ok(res) => {
                 debug!(rows_affected = res.rows_affected(), "truncate executed");
                 Ok(())
@@ -527,10 +525,10 @@ impl PostgresWriter {
             // Use INSERT ... ON CONFLICT for PostgreSQL 9.5-14
             return self.upsert_batch(rows, schema).await;
         } else {
-            return Err(ApitapError::MergeError(format!(
+            Err(ApitapError::MergeError(format!(
                 "Merge operation requires PostgreSQL 9.5 or higher (detected version: {})",
                 version
-            )));
+            )))
         }
     }
 

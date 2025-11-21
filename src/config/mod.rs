@@ -35,8 +35,7 @@ fn validate_credentials(cfg: &PipelineConfig) -> Result<()> {
                         return Err(crate::errors::ApitapError::ConfigError(format!(
                             "environment variable '{}' for postgres username is empty",
                             u_key
-                        ))
-                        .into());
+                        )));
                     }
                     let p_val = env::var(p_key).map_err(|_| {
                         crate::errors::ApitapError::ConfigError(format!(
@@ -48,12 +47,11 @@ fn validate_credentials(cfg: &PipelineConfig) -> Result<()> {
                         return Err(crate::errors::ApitapError::ConfigError(format!(
                             "environment variable '{}' for postgres password is empty",
                             p_key
-                        ))
-                        .into());
+                        )));
                     }
                     continue;
                 }
-                return Err(crate::errors::ApitapError::ConfigError(format!("postgres target '{}' missing credentials; provide username/password or username_env/password_env", pg.name)).into());
+                return Err(crate::errors::ApitapError::ConfigError(format!("postgres target '{}' missing credentials; provide username/password or username_env/password_env", pg.name)));
             }
         }
     }

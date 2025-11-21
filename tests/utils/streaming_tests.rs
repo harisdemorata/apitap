@@ -1,6 +1,6 @@
 use apitap::utils::streaming::{StreamConfig, TrueStreamingProcessor};
 use datafusion::arrow::datatypes::{DataType, Field, Schema};
-use futures::stream::{self, TryStreamExt};
+use futures::stream;
 use serde_json::json;
 use std::sync::Arc;
 
@@ -10,7 +10,7 @@ fn test_stream_config_default() {
 
     assert_eq!(config.batch_size, 256);
     assert_eq!(config.max_buffered_items, 512);
-    assert_eq!(config.true_streaming, true);
+    assert!(config.true_streaming);
 }
 
 #[test]
@@ -23,7 +23,7 @@ fn test_stream_config_custom() {
 
     assert_eq!(config.batch_size, 100);
     assert_eq!(config.max_buffered_items, 200);
-    assert_eq!(config.true_streaming, false);
+    assert!(!config.true_streaming);
 }
 
 #[test]
@@ -38,7 +38,7 @@ fn test_stream_config_clone() {
 
     assert_eq!(cloned.batch_size, 50);
     assert_eq!(cloned.max_buffered_items, 100);
-    assert_eq!(cloned.true_streaming, true);
+    assert!(cloned.true_streaming);
 }
 
 #[test]

@@ -311,6 +311,7 @@ impl PaginatedFetcher {
     }
 
     /// LIMIT/OFFSET mode. If `total_hint` is None, it fetches until a page yields 0 rows.
+    #[allow(clippy::too_many_arguments)]
     pub async fn fetch_limit_offset(
         &self,
         limit: u64,
@@ -572,6 +573,13 @@ pub struct FetchStats {
     pub error_count: usize,
     pub total_items: usize,
 }
+
+impl Default for FetchStats {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl FetchStats {
     pub fn new() -> Self {
         Self {

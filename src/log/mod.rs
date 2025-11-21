@@ -21,7 +21,7 @@ pub fn init_tracing() {
 /// Initialize tracing with explicit options.
 ///
 /// - `level`: optional log level string (e.g., "info", "debug,crate=trace"). If `None`, falls
-///    back to `RUST_LOG` or `info` as before.
+///   back to `RUST_LOG` or `info` as before.
 /// - `use_json`: if true, enable JSON formatter.
 pub fn init_tracing_with(level: Option<&str>, use_json: bool) {
     // Allow explicit level override, else fall back to RUST_LOG / default

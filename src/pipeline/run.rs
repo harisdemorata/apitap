@@ -17,6 +17,7 @@ pub struct FetchOpts {
     pub fetch_batch_size: usize, // internal http batch size
 }
 
+#[allow(clippy::too_many_arguments)]
 pub async fn run_fetch(
     client: Client,
     url: Url,
@@ -66,7 +67,7 @@ pub async fn run_fetch(
                     config_retry,
                 )
                 .await?;
-            return Ok(stats);
+            Ok(stats)
         }
 
         Some(Pagination::PageNumber {
@@ -103,7 +104,7 @@ pub async fn run_fetch(
         Some(Pagination::PageOnly { page_param: _ }) => {
             let _fetcher = PaginatedFetcher::new(client, url, opts.concurrency)
                 .with_batch_size(opts.fetch_batch_size);
-            return Ok(FetchStats::new());
+            Ok(FetchStats::new())
         }
 
         Some(Pagination::Cursor {
@@ -112,13 +113,11 @@ pub async fn run_fetch(
         }) => {
             let _fetcher = PaginatedFetcher::new(client, url, opts.concurrency)
                 .with_batch_size(opts.fetch_batch_size);
-            return Ok(FetchStats::new());
+            Ok(FetchStats::new())
         }
 
-        Some(Pagination::Default) | None => {
-            return Err(ApitapError::PaginationError(
-                "no supported pagination configured".into(),
-            ));
-        }
+        Some(Pagination::Default) | None => Err(ApitapError::PaginationError(
+            "no supported pagination configured".into(),
+        )),
     }
 }
